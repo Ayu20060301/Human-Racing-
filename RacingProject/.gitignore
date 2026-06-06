@@ -15,6 +15,10 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+//マップ除外
+Assets/CartoonTracksPack1
+
+
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1
 *.blend1.meta
