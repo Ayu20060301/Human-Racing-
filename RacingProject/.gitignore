@@ -15,8 +15,11 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+<<<<<<< HEAD
 //マップ除外
 Assets/CartoonTracksPack1
+=======
+>>>>>>> b55b839 (Add project with LFS)
 
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
