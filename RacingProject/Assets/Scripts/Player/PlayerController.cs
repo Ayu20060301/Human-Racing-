@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     
     private PlayerState m_currentState;
 
+    private Rigidbody m_Rigidbody;
+
     private float m_Speed = 0.0f; //速度
     private float m_MaxSpeed = 25.0f; //最大速度
     private float m_AccelPower = 8.0f; //加速
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        m_Rigidbody = GetComponent<Rigidbody>();
         ChangeState(new IdleState(this)); //最初は待機状態
     }
 
@@ -51,15 +54,27 @@ public class PlayerController : MonoBehaviour
    //-----------------------
     public void UpdateMovement()
     {
-        //加速
-        if(input.Accel > 0)
-        {
-           
+        UpdateSpeed();
 
+        MoveWithRayCast();
+
+        //ハンドル
+        this.transform.Rotate(0, input.Steer * m_TurnSpeed * Time.deltaTime, 0);
+    }
+
+
+    /// <summary>
+    /// 速度の更新
+    /// </summary>
+    private void UpdateSpeed()
+    {
+        //加速
+        if (input.Accel > 0)
+        {
             m_Speed += m_AccelPower * Time.deltaTime;
         }
         //ブレーキと摩擦
-        if(input.Brake > 0)
+        if (input.Brake > 0)
         {
             m_Speed -= m_BreakPower * Time.deltaTime;
         }
@@ -69,16 +84,51 @@ public class PlayerController : MonoBehaviour
             m_Speed -= m_Friction * Time.deltaTime;
             m_Speed = Mathf.Max(0.0f, m_Speed);
         }
-       
+
         //速度制限
         m_Speed = Mathf.Clamp(m_Speed, 0.0f, m_MaxSpeed);
 
-        //移動
-        this.transform.position += this.transform.forward * m_Speed * Time.deltaTime;
-
-        //ハンドル
-        this.transform.Rotate(0, input.Steer * m_TurnSpeed * Time.deltaTime, 0);
     }
+
+    /// <summary>
+    /// 移動処理(RayCast込み)
+    /// </summary>
+    private void MoveWithRayCast()
+    {
+        //移動
+        Vector3 move = this.transform.forward * m_Speed * Time.deltaTime;
+      
+        if(CanMove(move))
+        {
+            this.transform.position += move;
+        }
+        else
+        {
+            //減速
+            m_Speed *= 0.5f;
+        }
+    }
+
+
+    /// <summary>
+    /// 移動可能
+    /// </summary>
+    /// <param name="move">移動量</param>
+    private bool CanMove(Vector3 move)
+    {
+        float distance = move.magnitude;
+        Vector3 origin = this.transform.position + Vector3.up * 0.5f;
+        Vector3 forward = this.transform.forward;
+
+        float width = 0.5f;
+
+        bool center = Physics.Raycast(origin, forward, distance);
+        bool right = Physics.Raycast(origin + this.transform.right * width, forward, distance);
+        bool left = Physics.Raycast(origin - this.transform.right * width, forward, distance);
+
+        return !(center || right || left);
+    }
+
 
     //アイテム
     public void UseItem()
