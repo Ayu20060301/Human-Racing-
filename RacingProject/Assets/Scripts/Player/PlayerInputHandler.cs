@@ -9,6 +9,8 @@ public class PlayerInputHandler : MonoBehaviour
 
    public bool UseItem { get; private set; } //アイテム使う
 
+   public bool IsRearCamera { get; private set; }
+
     
    private Gamepad m_Pad;
 
@@ -24,9 +26,10 @@ public class PlayerInputHandler : MonoBehaviour
         Steer = PadInput.Steer(m_Pad);
         Accel = PadInput.AHeld(m_Pad) ? 1.0f : 0.0f; //Aボタン
         Brake = PadInput.BHeld(m_Pad) ? 1.0f : 0.0f; //Bボタン
+        IsRearCamera = m_Pad.buttonWest.isPressed;  //Xボタン
 
         //UseItem = m_Pad.rightTrigger.wasPressedThisFrame; //R2ボタン
 
-       
-   }
+
+    }
 }
