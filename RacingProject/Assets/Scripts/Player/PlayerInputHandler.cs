@@ -11,6 +11,7 @@ public class PlayerInputHandler : MonoBehaviour
 
    public bool IsRearCamera { get; private set; }
 
+   public bool IsFirstCamera { get; private set; }
     
    private Gamepad m_Pad;
 
@@ -27,6 +28,12 @@ public class PlayerInputHandler : MonoBehaviour
         Accel = PadInput.AHeld(m_Pad) ? 1.0f : 0.0f; //Aボタン
         Brake = PadInput.BHeld(m_Pad) ? 1.0f : 0.0f; //Bボタン
         IsRearCamera = m_Pad.buttonWest.isPressed;  //Xボタン
+       
+        //上十字キー
+        if(m_Pad.dpad.up.wasPressedThisFrame)
+        {
+            IsFirstCamera = !IsFirstCamera;
+        }
 
         //UseItem = m_Pad.rightTrigger.wasPressedThisFrame; //R2ボタン
 
